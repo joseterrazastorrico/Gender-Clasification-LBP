@@ -32,7 +32,9 @@ class PrepareData:
             
     def CROP_SAVE(self,img, dir, name, x, y, w, h, p):
         img2 = img[y-p+1:y+h+p, x-p+1:x+w+p]
-        cv2.imwrite(os.path.join(dir,name), img2)
+        dim = (100,100)
+        img2_resized = cv2.resize(img2, dim, interpolation = cv2.INTER_AREA)
+        cv2.imwrite(os.path.join(dir,name), img2_resized)
         
     def DataAugmentation(self,lista, dir_input, dir_output, rots=[-30,-15,15,30], p = 0):
         j = 0
