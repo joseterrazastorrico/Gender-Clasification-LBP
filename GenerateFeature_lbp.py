@@ -15,7 +15,7 @@ def main():
 	method = input("Ingrese metodo de LBP ('uniform' o 'nri_uniform'): \n")
 	if method=="": method = "nri_uniform"
 
-	lbp = LocalBinaryPattern(8, 1, method='nri_uniform')
+	lbp = LocalBinaryPattern(8, 1, method=method)
 	for carp in os.listdir(dir_input):
 		datas = []
 		for cat in os.listdir(os.path.join(dir_input, carp)):

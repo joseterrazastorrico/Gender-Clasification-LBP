@@ -36,7 +36,7 @@ class PrepareData:
         img2_resized = cv2.resize(img2, dim, interpolation = cv2.INTER_AREA)
         cv2.imwrite(os.path.join(dir,name), img2_resized)
         
-    def DataAugmentation(self,lista, dir_input, dir_output, rots=[-30,-15,15,30], p = 0):
+    def DataAugmentation(self,lista, dir_input, dir_output, rots=[-30,-15,15,30], p = 0, train=1):
         j = 0
         for i in tqdm(range(len(lista)), desc='Progreso {}'.format(" ".join(dir_output.split("\\")[-2:]))):
             #tqdm(j, desc="Progreso")
@@ -54,19 +54,21 @@ class PrepareData:
             
             self.CROP_SAVE(img, dir_output, 'image_{}.png'.format(j), x, y, w, h,p)
             j=j+1           
-            ## DATA AUG
-            ## GIRAR ROSTRO
-            img_mod = cv2.flip(img, 1)
-            self.CROP_SAVE(img_mod, dir_output, 'image_{}.png'.format(j), x, y, w, h,p)
-            j=j+1          
-            ## ROTAR
-            rows, cols = img.shape[:2]
-            for r in rots:
-                M = cv2.getRotationMatrix2D((cols/2, rows/2), r, 1)
-                img_rotated = cv2.warpAffine(img, M, (cols,rows))
-                self.CROP_SAVE(img_rotated, dir_output, 'image_{}.png'.format(j), x, y, w, h,p)
-                j=j+1
+
+            if train==1:
+                ## DATA AUG
+                ## GIRAR ROSTRO
+                img_mod = cv2.flip(img, 1)
+                self.CROP_SAVE(img_mod, dir_output, 'image_{}.png'.format(j), x, y, w, h,p)
+                j=j+1          
+                ## ROTAR
+                rows, cols = img.shape[:2]
+                for r in rots:
+                    M = cv2.getRotationMatrix2D((cols/2, rows/2), r, 1)
+                    img_rotated = cv2.warpAffine(img, M, (cols,rows))
+                    self.CROP_SAVE(img_rotated, dir_output, 'image_{}.png'.format(j), x, y, w, h,p)
+                    j=j+1
     def DataAugmentation_all(self):
         for i in os.listdir(self.dir_input):
-            self.DataAugmentation(self.Train[i], os.path.join(self.dir_input,i), os.path.join(self.dir_output, 'Train',i))
-            self.DataAugmentation(self.Test[i], os.path.join(self.dir_input,i), os.path.join(self.dir_output, 'Test',i))
+            self.DataAugmentation(self.Train[i], os.path.join(self.dir_input,i), os.path.join(self.dir_output, 'Train',i), train=1)
+            self.DataAugmentation(self.Test[i], os.path.join(self.dir_input,i), os.path.join(self.dir_output, 'Test',i), train=0)
